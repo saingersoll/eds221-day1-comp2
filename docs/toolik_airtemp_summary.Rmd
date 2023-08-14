@@ -21,6 +21,16 @@ The data are stored in the `data-raw` subfolder. We'll use `here::here()` to poi
 toolik_weather <- read_csv(here::here("data", "data-raw", "toolik_weather.csv"))
 ```
 
+OR THIS WORKS AS WELL TO IDENTIFY WHAT PACKAGE HERE IS COMING FROM
+
+```{r}
+toolik_weather <- readr::read_csv(here::here("data", "data-raw", "toolik_weather.csv"), na = "#N/A") %>%
+  janitor::clean_names()
+
+  # na = #NA removes them as characters and allows them to be understood as N/A
+# command shift m to insert pipe operator
+# if no name inserted into () then auto taken to lowercase_snake_case
+```
 
 - First: Look at the data you've read in (always always)
 
@@ -64,6 +74,24 @@ names(toolik_weather)
 
 Let's make a jitterplot of temperatures by month. 
 
+```{r}
+my_toolik_temp_plot <- ggplot(data = toolik_weather, aes(x = as.factor(month), y = daily_air_temp_mean_c)) +
+  geom_jitter(aes(color = daily_air_temp_mean_c), show.legend = FALSE) +
+  scale_color_gradient(low = "green", high = "pink") +
+  theme_linedraw() +
+  labs(title = "Toolik Station Daily Air Temps", x = "Month", y = "Daily Mean Air Temps (C)")
+
+my_toolik_temp_plot
+
+ggsave(here::here("figs", "my_toolik_temp_plot.png"), height = 5, width = 6)
+```
+```{r}
+toolik_temp_plot2 <- ggplot(data = toolik_weather, aes(x = as.factor(month), y = daily_air_temp_mean_c)) +
+  geom_jitter(aes(color = daily_air_temp_mean_c), ) +
+  scale_color_gradient(colors = c("green", "pink", "yellow")) +
+  theme_linedraw() +
+  labs(title = "Toolik Station Daily Air Temps", x = "Month", y = "Daily Mean Air Temps (C)")
+```
 
 ```{r}
 toolik_temp_plot <- ggplot(data = toolik_weather, aes(x = as.factor(month), y = daily_air_temp_mean_c)) +
@@ -75,6 +103,8 @@ toolik_temp_plot <- ggplot(data = toolik_weather, aes(x = as.factor(month), y = 
        y = "Daily mean air temperatures (Celsius)")
 
 toolik_temp_plot
+
+ggsave(here::here("figs", "toolik_temp_plot.png"), height = 5, width = 6)
 ```
 
 ## Export a figure
